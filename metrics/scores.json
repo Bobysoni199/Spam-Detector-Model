@@ -1,0 +1,7 @@
+{
+    "accuracy": 100.0,
+    "train_rows": 800,
+    "test_rows": 200,
+    "spam_count": 300,
+    "normal_count": 700
+}

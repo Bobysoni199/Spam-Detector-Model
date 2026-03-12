@@ -1,0 +1,23 @@
+
+stages:
+
+  # tracks clean_data.csv produced by Azure ML preprocess step
+  track_data:
+    cmd: echo "clean_data.csv tracked by DVC"
+    deps:
+      - src/preprocess.py
+    outs:
+      - data/clean_data.csv
+
+  # tracks models produced by Azure ML train step
+  track_models:
+    cmd: echo "models tracked by DVC"
+    deps:
+      - src/train.py
+      - data/clean_data.csv
+    outs:
+      - models/spam_model.pkl
+      - models/scaler.pkl
+    metrics:
+      - metrics/scores.json:
+          cache: false

@@ -1,0 +1,38 @@
+schema: '2.0'
+stages:
+  track_data:
+    cmd: echo "clean_data.csv tracked by DVC"
+    deps:
+    - path: src/preprocess.py
+      hash: md5
+      md5: cb931159a1cfc586a8a6e58cf24735e4
+      size: 2066
+    outs:
+    - path: data/clean_data.csv
+      hash: md5
+      md5: 17e2091b4dd9be46583564514433911d
+      size: 45405
+  track_models:
+    cmd: echo "models tracked by DVC"
+    deps:
+    - path: data/clean_data.csv
+      hash: md5
+      md5: 17e2091b4dd9be46583564514433911d
+      size: 45405
+    - path: src/train.py
+      hash: md5
+      md5: fe2028390b4d99eedfb5383dc5793f85
+      size: 7866
+    outs:
+    - path: metrics/scores.json
+      hash: md5
+      md5: 1dc016623636d81c810e48530ce41bd5
+      size: 118
+    - path: models/scaler.pkl
+      hash: md5
+      md5: f3babce44f3deebdf2cb2bb0dbef6faf
+      size: 935
+    - path: models/spam_model.pkl
+      hash: md5
+      md5: 2009a23f432d0ce19732760d4519697f
+      size: 879
