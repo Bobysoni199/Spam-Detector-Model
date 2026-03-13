@@ -1,0 +1,6 @@
+[core]
+    remote = azureblob
+
+[remote "azureblob"]
+    url = azure://spam-detector-data/dvc-store
+    account_name = rndbhavishyarg8495
