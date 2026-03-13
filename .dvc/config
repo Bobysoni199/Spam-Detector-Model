@@ -1,6 +1,5 @@
 [core]
     remote = azureblob
-
-[remote "azureblob"]
+['remote "azureblob"']
     url = azure://spam-detector-data/dvc-store
-    account_name = rndbhavishyarg8495
+    account_name = spamdetectorstorage

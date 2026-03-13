@@ -3,9 +3,9 @@ import subprocess
 from azure.identity import DefaultAzureCredential
 from azure.mgmt.storage import StorageManagementClient
 
-SUBSCRIPTION_ID      = "31071f64-adbc-4ffa-93de-8c69ac43184a"
+SUBSCRIPTION_ID      = "d325bbcc-9cfc-40a7-8a4f-93290b27229d"
 RESOURCE_GROUP       = "RnD-Bhavishya-RG"
-STORAGE_ACCOUNT_NAME = "rndbhavishyarg8495"
+STORAGE_ACCOUNT_NAME = "spamdetectorstorage"
 CONTAINER_NAME       = "spam-detector-data"
 
 # ================================================================

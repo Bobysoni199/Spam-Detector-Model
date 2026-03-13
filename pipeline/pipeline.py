@@ -18,9 +18,9 @@ from azure.identity import DefaultAzureCredential
 # CONFIG
 # ================================================================
 
-SUBSCRIPTION_ID = "31071f64-adbc-4ffa-93de-8c69ac43184a"
+SUBSCRIPTION_ID = "d325bbcc-9cfc-40a7-8a4f-93290b27229d"
 RESOURCE_GROUP  = "RnD-Bhavishya-RG"
-WORKSPACE_NAME  = "azure-ml199"
+WORKSPACE_NAME  = "spam-detector-ws"
 ENDPOINT_NAME   = "spam-detector-endpoint"
 DEPLOYMENT_NAME = "spam-deployment"
 ENVIRONMENT     = "azureml://registries/azureml/environments/sklearn-1.5/versions/40"
