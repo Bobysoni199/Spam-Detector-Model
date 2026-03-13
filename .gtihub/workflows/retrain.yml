@@ -1,0 +1,115 @@
+# ================================================================
+# CI/CD with GitHub Actions
+# ================================================================
+# Triggers:
+# 1. Push to main branch  → auto retrain
+# 2. Every Monday 9am     → scheduled retrain
+# 3. Manual trigger       → run anytime
+#
+# What it does:
+# 1. sets up Python
+# 2. installs packages
+# 3. logs into Azure
+# 4. runs pipeline.py → submits to Azure ML
+# ================================================================
+
+name: Retrain Spam Detector
+
+on:
+  # trigger 1: when code pushed to main branch
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/**'           # only retrain if src files change
+      - 'pipeline/**'      # or pipeline files change
+
+  # trigger 2: every monday at 9am
+  schedule:
+    - cron: '0 9 * * 1'   # min hour day month weekday
+
+  # trigger 3: manual trigger from GitHub UI
+  workflow_dispatch:
+    inputs:
+      normal_count:
+        description: 'Number of normal transactions'
+        required: false
+        default: '700'
+      spam_count:
+        description: 'Number of spam transactions'
+        required: false
+        default: '300'
+
+jobs:
+  retrain:
+    runs-on: ubuntu-latest   # runs on GitHub's servers
+
+    steps:
+      # ============================================================
+      # STEP 1: GET THE CODE
+      # ============================================================
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # ============================================================
+      # STEP 2: SETUP PYTHON
+      # ============================================================
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      # ============================================================
+      # STEP 3: INSTALL PACKAGES
+      # ============================================================
+      - name: Install packages
+        run: |
+          pip install azure-ai-ml azure-identity azure-mgmt-storage dvc[azure] pandas scikit-learn joblib mlflow
+
+      # ============================================================
+      # STEP 4: LOGIN TO AZURE
+      # uses secrets stored in GitHub → Settings → Secrets
+      # ============================================================
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      # ============================================================
+      # STEP 5: SETUP DVC
+      # ============================================================
+      - name: Setup DVC remote
+        run: |
+          dvc remote modify azureblob account_name ${{ secrets.STORAGE_ACCOUNT_NAME }}
+          dvc remote modify azureblob account_key  ${{ secrets.STORAGE_ACCOUNT_KEY }}
+
+      # ============================================================
+      # STEP 6: RUN PIPELINE
+      # this submits job to Azure ML
+      # Azure ML runs preprocess + train on Azure compute
+      # ============================================================
+      - name: Run Azure ML Pipeline
+        run: |
+          python3 pipeline/pipeline.py
+        env:
+          AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          AZURE_RESOURCE_GROUP:  ${{ secrets.AZURE_RESOURCE_GROUP }}
+          AZURE_WORKSPACE:       ${{ secrets.AZURE_WORKSPACE }}
+
+      # ============================================================
+      # STEP 7: NOTIFY SUCCESS
+      # ============================================================
+      - name: Pipeline Success
+        if: success()
+        run: |
+          echo "✅ Retrain pipeline completed successfully!"
+          echo "New model deployed to spam-detector-endpoint"
+
+      # ============================================================
+      # STEP 8: NOTIFY FAILURE
+      # ============================================================
+      - name: Pipeline Failed
+        if: failure()
+        run: |
+          echo "❌ Retrain pipeline failed!"
+          echo "Check Azure ML Studio for details"

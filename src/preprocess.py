@@ -11,7 +11,7 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument("--output_data", type=str, help="Path to save clean data")
 
-# NEW ARGUMENTS (THIS IS WHAT WAS MISSING)
+# NEW ARGUMENTS 
 parser.add_argument("--normal_count", type=int, default=700)
 parser.add_argument("--spam_count", type=int, default=300)
 
